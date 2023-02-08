@@ -91,8 +91,13 @@
           "configurations": {
             "production": {
               "browserTarget": "TodoList:build:production"
+            },
+            "development": {
+              "browserTarget": "angular-tour-of-heroes:build:development",
+              "proxyConfig": "src/proxy.config.json"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

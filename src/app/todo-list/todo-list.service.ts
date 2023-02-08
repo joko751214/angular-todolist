@@ -7,9 +7,11 @@ import { HttpClient } from '@angular/common/http';
 })
 export class TodoListService {
   constructor(private http: HttpClient) {
-    this.http.get('http://localhost:3000/lists').subscribe((res: Todo[]) => {
-      // console.log(new Todo(res));
-    });
+    this.http
+      .get('http://localhost:3000/lists')
+      .subscribe(async (data: Todo[]) => {
+        this.list = data.map((item) => new Todo(item.title));
+      });
   }
 
   private list: Todo[] = [];

@@ -1,19 +1,16 @@
 {
   "lists": [
     {
-      "title": "111",
-      "completed": false,
-      "editStatus": false
+      "id":1,
+      "title": "111"
     },
     {
-      "title": "222",
-      "completed": false,
-      "editStatus": false
+      "id":2,
+      "title": "222"
     },
     {
-      "title": "333",
-      "completed": false,
-      "editStatus": false
+      "id":3,
+      "title": "333"
     }
   ]
 }

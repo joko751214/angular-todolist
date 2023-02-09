@@ -92,3 +92,19 @@
     </button>
   </footer>
 </section>
+<nav
+  aria-label="Page navigation example"
+  class="d-flex justify-content-end"
+  *ngIf="getAllList().length"
+>
+  <ul class="pagination">
+    <li
+      class="page-item"
+      [class.active]="cheeckPageStatus(i + 1)"
+      (click)="setPageStatus(i + 1)"
+      *ngFor="let page of getPageLIst(); let i = index"
+    >
+      <span class="page-link" href="javascript:;">{{ i + 1 }}</span>
+    </li>
+  </ul>
+</nav>

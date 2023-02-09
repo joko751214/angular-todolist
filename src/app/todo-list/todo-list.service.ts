@@ -1,26 +1,72 @@
 import { Injectable } from '@angular/core';
 import { Todo } from './todo.model';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodoListService {
   constructor(private http: HttpClient) {
-    this.http
-      .get('http://localhost:3000/lists')
-      .subscribe(async (data: Todo[]) => {
-        this.list = data.map((item) => new Todo(item.title));
-      });
+    this.fetchData();
+    // this.addList('666');
   }
 
+  baseURL: string = 'http://localhost:3000/';
+
   private list: Todo[] = [];
+  private pageList = [];
+  private page = 1;
+
+  // 解析 Header Link 資訊
+  parseLinkHeader(linkHeader) {
+    const linkHeadersArray = linkHeader
+      .split(', ')
+      .map((header) => header.split('; '));
+    const linkHeadersMap = linkHeadersArray.map((header) => {
+      const thisHeaderRel = header[1].replace(/"/g, '').replace('rel=', '');
+      const thisHeaderUrl = Number(
+        header[0].slice(1, -1).split('_page=')[1].split('&')[0]
+      );
+      return [thisHeaderRel, thisHeaderUrl];
+    });
+    return Object.fromEntries(linkHeadersMap);
+  }
+
+  // 自動產生分頁的數量
+  generatePageArray(first, last): number[] {
+    const pageArr = [];
+    for (var i = first; i < last + 1; i++) {
+      pageArr.push(i);
+    }
+    return pageArr;
+  }
+
+  fetchData(): void {
+    this.http
+      .get(`http://localhost:3000/lists?_page=${this.page}&_limit=10`, {
+        observe: 'response',
+      })
+      .subscribe((data) => {
+        const body: any = data.body;
+        const link = data.headers.get('Link');
+        const linkObj = this.parseLinkHeader(link);
+        this.pageList = this.generatePageArray(linkObj.first, linkObj.last);
+        this.list = body.map((item) => new Todo(item.title));
+      });
+  }
 
   // 新增代辦事項
   add(title: string): void {
     // 避免傳入的 title 是無效值或空白字串，稍微判斷一下
     if (title) {
-      this.list.push(new Todo(title));
+      // this.list.push(new Todo(title));
+      const headers = { 'content-type': 'application/json' };
+      this.http
+        .post('http://localhost:3000/lists', { title }, { headers: headers })
+        .subscribe((item: any) => {
+          if (item.id) this.fetchData();
+        });
     }
   }
 
@@ -42,5 +88,15 @@ export class TodoListService {
   // 從清單中移除所有已完成之待辦事項
   removeCompleted(): void {
     this.list = this.getWithCompleted(false);
+  }
+
+  // 獲取分頁資訊
+  getPageLIst() {
+    return this.pageList;
+  }
+
+  // 更改目前分頁
+  setPage(page) {
+    this.page = page;
   }
 }

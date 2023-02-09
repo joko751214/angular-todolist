@@ -15,6 +15,7 @@ export class TodoListComponent implements OnInit {
 
   todoStatusType = TodoStatusType;
   status = TodoStatusType.All;
+  page = 1;
 
   // 新增代辦事項
   addTodo(inputRef: HTMLInputElement): void {
@@ -110,5 +111,21 @@ export class TodoListComponent implements OnInit {
   // 所有的代辦事項是否都已完成
   allCompleted() {
     return this.getAllList().length === this.getCompletedList().length;
+  }
+
+  // 獲取分頁資訊
+  getPageLIst() {
+    return this.todoListService.getPageLIst();
+  }
+
+  // 設定分頁狀態
+  async setPageStatus(value): Promise<void> {
+    this.page = value;
+    await this.todoListService.setPage(value);
+    this.todoListService.fetchData();
+  }
+  // 檢查分頁 active 狀態
+  cheeckPageStatus(page) {
+    return this.page === page;
   }
 }

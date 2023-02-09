@@ -23,14 +23,18 @@ export class TodoListService {
     const linkHeadersArray = linkHeader
       .split(', ')
       .map((header) => header.split('; '));
+
     const linkHeadersMap = linkHeadersArray.map((header) => {
+      // 分頁只有1頁時，json-server回傳的 Link 會是空白，導致下面的 replace 報錯
+      if (header.length === 1) return null;
       const thisHeaderRel = header[1].replace(/"/g, '').replace('rel=', '');
       const thisHeaderUrl = Number(
         header[0].slice(1, -1).split('_page=')[1].split('&')[0]
       );
       return [thisHeaderRel, thisHeaderUrl];
     });
-    return Object.fromEntries(linkHeadersMap);
+    if (linkHeadersMap.includes(null)) return { first: 1, last: 1 };
+    else return Object.fromEntries(linkHeadersMap);
   }
 
   // 自動產生分頁的數量
@@ -52,7 +56,7 @@ export class TodoListService {
         const link = data.headers.get('Link');
         const linkObj = this.parseLinkHeader(link);
         this.pageList = this.generatePageArray(linkObj.first, linkObj.last);
-        this.list = body.map((item) => new Todo(item.title));
+        this.list = body.map((item) => new Todo(item.title, item.id));
       });
   }
 

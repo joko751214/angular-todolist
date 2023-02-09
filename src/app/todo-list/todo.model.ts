@@ -1,10 +1,12 @@
 export class Todo {
+  id = null;
   title = '';
   completed = false;
   editStatus = false;
 
-  constructor(title: string) {
+  constructor(title: string, id: number) {
     this.title = title || ''; // 為避免傳入的值為 Falsy 值，稍作處理
+    this.id = id;
   }
 
   done(): boolean {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Todo } from './todo.model';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -100,8 +100,16 @@ export class TodoListService {
   }
 
   // 從清單中移除所有已完成之待辦事項
-  removeCompleted(): void {
-    this.list = this.getWithCompleted(false);
+  async removeCompleted(): Promise<void> {
+    const idsFetch = this.getWithCompleted(true).map((item) => {
+      return this.http.delete(`http://localhost:3000/lists/${item.id}`, {
+        observe: 'response',
+      });
+    });
+    forkJoin(idsFetch).subscribe((response) => {
+      const allDone = response.every((res) => res.status === 200);
+      if (allDone) this.fetchData();
+    });
   }
 
   // 獲取分頁資訊

@@ -64,12 +64,16 @@ export class TodoListService {
   add(title: string): void {
     // 避免傳入的 title 是無效值或空白字串，稍微判斷一下
     if (title) {
-      // this.list.push(new Todo(title));
-      const headers = { 'content-type': 'application/json' };
       this.http
-        .post('http://localhost:3000/lists', { title }, { headers: headers })
-        .subscribe((item: any) => {
-          if (item.id) this.fetchData();
+        .post(
+          'http://localhost:3000/lists',
+          { title },
+          {
+            observe: 'response',
+          }
+        )
+        .subscribe((res) => {
+          if (res.status === 201) this.fetchData();
         });
     }
   }

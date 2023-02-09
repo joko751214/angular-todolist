@@ -41,8 +41,8 @@
           *ngIf="todo.editing()"
           #editedtodo
           [value]="todo.getTitle()"
-          (blur)="update(todo, editedtodo.value)"
-          (keyup.enter)="update(todo, editedtodo.value)"
+          (blur)="updateTodo(todo, editedtodo.value)"
+          (keyup.enter)="updateTodo(todo, editedtodo.value)"
           (keyup.escape)="cancelEdit(todo)"
         />
       </li>

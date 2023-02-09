@@ -113,4 +113,16 @@ export class TodoListService {
   setPage(page) {
     this.page = page;
   }
+
+  updateTodo(id: number, title: string) {
+    this.http
+      .put(
+        `http://localhost:3000/lists/${id}`,
+        { title },
+        { observe: 'response' }
+      )
+      .subscribe((res) => {
+        if (res.status === 200) this.fetchData();
+      });
+  }
 }

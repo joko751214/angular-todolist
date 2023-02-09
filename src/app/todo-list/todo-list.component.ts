@@ -55,7 +55,7 @@ export class TodoListComponent implements OnInit {
   }
 
   // 更新代辦事項標題
-  update(todo: Todo, newTitle: string): void {
+  updateTodo(todo: Todo, newTitle: string): void {
     if (!todo.editing) {
       return;
     }
@@ -63,12 +63,11 @@ export class TodoListComponent implements OnInit {
     const title = newTitle.trim();
 
     if (title) {
-      todo.setTitle(title);
-      todo.editable(false);
+      this.todoListService.updateTodo(todo.id, title);
     } else {
       const index = this.getList().indexOf(todo);
       if (index !== -1) {
-        this.remove(index);
+        this.remove(todo.id);
       }
     }
   }

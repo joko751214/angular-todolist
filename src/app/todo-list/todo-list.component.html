@@ -24,17 +24,6 @@
         [class.completed]="todo.done()"
         [class.editing]="todo.editing()"
       >
-        <div class="view">
-          <input
-            class="toggle"
-            type="checkbox"
-            [checked]="todo.done()"
-            (click)="todo.toggleCompletion()"
-          />
-          <label (dblclick)="edit(todo)">{{ todo.getTitle() }}</label>
-
-          <button class="destroy" (click)="remove(todo.id)"></button>
-        </div>
         <input
           type="text"
           class="edit"
@@ -45,6 +34,17 @@
           (keyup.enter)="updateTodo(todo, editedtodo.value)"
           (keyup.escape)="cancelEdit(todo)"
         />
+        <div class="view" *ngIf="!todo.editing()">
+          <input
+            class="toggle"
+            type="checkbox"
+            [checked]="todo.done()"
+            (click)="todo.toggleCompletion()"
+          />
+          <label (dblclick)="edit(todo)">{{ todo.getTitle() }}</label>
+
+          <button class="destroy" (click)="remove(todo.id)"></button>
+        </div>
       </li>
     </ul>
   </section>

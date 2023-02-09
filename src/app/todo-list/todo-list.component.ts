@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { TodoListService } from './todo-list.service';
 import { Todo } from './todo.model';
 import { TodoStatusType } from './todo-status-type.enum';
@@ -9,6 +9,12 @@ import { TodoStatusType } from './todo-status-type.enum';
   styleUrls: ['./todo-list.component.css'],
 })
 export class TodoListComponent implements OnInit {
+  @ViewChild('editedtodo', { static: false })
+  set editedtodo(element: ElementRef<HTMLInputElement>) {
+    if (element) {
+      element.nativeElement.focus();
+    }
+  }
   constructor(private todoListService: TodoListService) {}
 
   ngOnInit(): void {}

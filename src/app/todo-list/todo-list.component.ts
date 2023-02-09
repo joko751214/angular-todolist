@@ -62,7 +62,7 @@ export class TodoListComponent implements OnInit {
 
   // 更新代辦事項標題
   updateTodo(todo: Todo, newTitle: string): void {
-    if (!todo.editing) {
+    if (!todo.editing()) {
       return;
     }
 

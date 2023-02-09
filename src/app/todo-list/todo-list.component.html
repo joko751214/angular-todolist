@@ -30,9 +30,9 @@
           *ngIf="todo.editing()"
           #editedtodo
           [value]="todo.getTitle()"
-          (blur)="updateTodo(todo, editedtodo.value)"
-          (keyup.enter)="updateTodo(todo, editedtodo.value)"
-          (keyup.escape)="cancelEdit(todo)"
+          (blur)="updateTodo(todo, editedtodo.value, $event)"
+          (keydown.enter)="editedtodo.blur()"
+          (keydown.escape)="cancelEdit(todo)"
         />
         <div class="view" *ngIf="!todo.editing()">
           <input

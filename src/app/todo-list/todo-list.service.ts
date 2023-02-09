@@ -80,8 +80,14 @@ export class TodoListService {
   }
 
   // 刪除代辦事項
-  remove(index: number) {
-    this.list.splice(index, 1);
+  remove(id: number | string) {
+    this.http
+      .delete(`http://localhost:3000/lists/${id}`, {
+        observe: 'response',
+      })
+      .subscribe((res) => {
+        if (res.status === 200) this.fetchData();
+      });
   }
 
   // 取得已完成 / 未完成的清單

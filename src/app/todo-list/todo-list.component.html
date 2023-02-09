@@ -33,7 +33,7 @@
           />
           <label (dblclick)="edit(todo)">{{ todo.getTitle() }}</label>
 
-          <button class="destroy" (click)="remove(i)"></button>
+          <button class="destroy" (click)="remove(todo.id)"></button>
         </div>
         <input
           type="text"

@@ -45,8 +45,8 @@ export class TodoListComponent implements OnInit {
   }
 
   // 刪除代辦事項
-  remove(index: number) {
-    this.todoListService.remove(index);
+  remove(id: number) {
+    this.todoListService.remove(id);
   }
 
   // 編輯代辦事項

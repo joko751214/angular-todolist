@@ -41,9 +41,9 @@
             [checked]="todo.done()"
             (click)="todo.toggleCompletion()"
           />
-          <label (dblclick)="edit(todo)">{{ todo.getTitle() }}</label>
+          <label (dblclick)="editTodo(todo)">{{ todo.getTitle() }}</label>
 
-          <button class="destroy" (click)="remove(todo.id)"></button>
+          <button class="destroy" (click)="removeTodo(todo.id)"></button>
         </div>
       </li>
     </ul>

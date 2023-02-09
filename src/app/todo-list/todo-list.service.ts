@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Todo } from './todo.model';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +9,6 @@ import { forkJoin, Observable } from 'rxjs';
 export class TodoListService {
   constructor(private http: HttpClient) {
     this.fetchData();
-    // this.addList('666');
   }
 
   baseURL: string = 'http://localhost:3000/';
@@ -17,6 +16,8 @@ export class TodoListService {
   private list: Todo[] = [];
   private pageList = [];
   private page = 1;
+
+  private linkObj: any = {};
 
   // 解析 Header Link 資訊
   parseLinkHeader(linkHeader) {
@@ -46,6 +47,7 @@ export class TodoListService {
     return pageArr;
   }
 
+  // 取得代辦事項清單
   fetchData(): void {
     this.http
       .get(`http://localhost:3000/lists?_page=${this.page}&_limit=10`, {
@@ -54,9 +56,14 @@ export class TodoListService {
       .subscribe((data) => {
         const body: any = data.body;
         const link = data.headers.get('Link');
-        const linkObj = this.parseLinkHeader(link);
-        this.pageList = this.generatePageArray(linkObj.first, linkObj.last);
-        this.list = body.map((item) => new Todo(item.title, item.id));
+        this.linkObj = this.parseLinkHeader(link);
+        if (data.status === 200) {
+          this.pageList = this.generatePageArray(
+            this.linkObj.first,
+            this.linkObj.last
+          );
+          this.list = body.map((item) => new Todo(item.title, item.id));
+        }
       });
   }
 
@@ -84,13 +91,16 @@ export class TodoListService {
   }
 
   // 刪除代辦事項
-  remove(id: number | string) {
+  removeTodo(id: number | string) {
     this.http
       .delete(`http://localhost:3000/lists/${id}`, {
         observe: 'response',
       })
-      .subscribe((res) => {
-        if (res.status === 200) this.fetchData();
+      .subscribe(async (res) => {
+        if (res.status === 200) {
+          await this.fetchData();
+          this.checkPageStatus();
+        }
       });
   }
 
@@ -122,6 +132,13 @@ export class TodoListService {
     this.page = page;
   }
 
+  // 檢查刪除後獲得的分頁列表有沒有改變
+  checkPageStatus() {
+    console.log(this.page, 'page');
+    console.log(this.linkObj, 'linkObj');
+  }
+
+  // 更新代辦事項標題
   updateTodo(id: number, title: string) {
     this.http
       .put(

@@ -51,12 +51,12 @@ export class TodoListComponent implements OnInit {
   }
 
   // 刪除代辦事項
-  remove(id: number) {
-    this.todoListService.remove(id);
+  removeTodo(id: number) {
+    this.todoListService.removeTodo(id);
   }
 
   // 編輯代辦事項
-  edit(todo: Todo) {
+  editTodo(todo: Todo) {
     todo.editable(true);
   }
 
@@ -73,7 +73,7 @@ export class TodoListComponent implements OnInit {
     } else {
       const index = this.getList().indexOf(todo);
       if (index !== -1) {
-        this.remove(todo.id);
+        this.removeTodo(todo.id);
       }
     }
   }

@@ -71,13 +71,7 @@ export class TodoListService {
   add(title: string): void {
     if (title) {
       this.http
-        .post(
-          'http://localhost:3000/lists',
-          { title },
-          {
-            observe: 'response',
-          }
-        )
+        .post('http://localhost:3000/lists', { title }, { observe: 'response' })
         .subscribe((res) => {
           if (res.status === 201) this.fetchData();
         });

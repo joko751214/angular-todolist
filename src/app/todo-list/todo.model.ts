@@ -5,7 +5,7 @@ export class Todo {
   editStatus = false;
 
   constructor(title: string, id: number) {
-    this.title = title || ''; // 為避免傳入的值為 Falsy 值，稍作處理
+    this.title = title || '';
     this.id = id;
   }
 

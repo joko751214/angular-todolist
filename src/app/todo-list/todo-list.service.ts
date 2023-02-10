@@ -90,7 +90,7 @@ export class TodoListService {
   }
 
   // 刪除代辦事項
-  removeTodo(id: number | string) {
+  removeTodo(id: number | string): void {
     this.http
       .delete(`http://localhost:3000/lists/${id}`, {
         observe: 'response',
@@ -118,6 +118,7 @@ export class TodoListService {
     });
     forkJoin(idsFetch).subscribe((response) => {
       const allDone = response.every((res) => res.status === 200);
+      if (this.getWithCompleted(false).length === 0) this.setPage(1);
       if (allDone) this.fetchData();
     });
   }

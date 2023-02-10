@@ -125,12 +125,13 @@ export class TodoListComponent implements OnInit {
 
   // 設定分頁狀態
   async setPageStatus(value) {
-    this.page = value;
     this.todoListService.setPage(value);
+    this.page = this.todoListService.getPage();
     this.todoListService.fetchData();
   }
+
   // 檢查分頁 active 狀態
   cheeckPageStatus(page) {
-    return this.page === page;
+    return this.todoListService.getPage() === page;
   }
 }

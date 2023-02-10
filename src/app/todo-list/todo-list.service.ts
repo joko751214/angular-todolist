@@ -69,7 +69,6 @@ export class TodoListService {
 
   // 新增代辦事項
   add(title: string): void {
-    // 避免傳入的 title 是無效值或空白字串，稍微判斷一下
     if (title) {
       this.http
         .post(
@@ -98,8 +97,9 @@ export class TodoListService {
       })
       .subscribe(async (res) => {
         if (res.status === 200) {
+          // 判斷如果刪除的項目是最後一項的話，就將 page 直接回到第1頁
+          if (this.getList().length === 1) this.setPage(1);
           await this.fetchData();
-          this.checkPageStatus();
         }
       });
   }
@@ -127,15 +127,14 @@ export class TodoListService {
     return this.pageList;
   }
 
+  // 獲取目前分頁
+  getPage() {
+    return this.page;
+  }
+
   // 更改目前分頁
   setPage(page) {
     this.page = page;
-  }
-
-  // 檢查刪除後獲得的分頁列表有沒有改變
-  checkPageStatus() {
-    console.log(this.page, 'page');
-    console.log(this.linkObj, 'linkObj');
   }
 
   // 更新代辦事項標題

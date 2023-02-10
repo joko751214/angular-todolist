@@ -29,10 +29,6 @@ export class Todo {
     this.editStatus = val;
   }
 
-  setTitle(title: string): void {
-    this.title = title;
-  }
-
   setCompleted(completed: boolean): void {
     this.completed = completed;
   }

@@ -100,7 +100,7 @@
   <ul class="pagination">
     <li
       class="page-item"
-      *ngFor="let page of getPageLIst(); let i = index"
+      *ngFor="let page of getTotalPage(); let i = index"
       [class.active]="cheeckPageStatus(i + 1)"
       (click)="setPageStatus(i + 1)"
     >

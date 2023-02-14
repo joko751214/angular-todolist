@@ -9,11 +9,13 @@ import { forkJoin } from 'rxjs';
 export class TodoListService {
   constructor(private http: HttpClient) {
     this.fetchData();
+    this.fetchAllData();
   }
 
   baseURL: string = 'http://localhost:3000/';
 
   private list: Todo[] = [];
+  private allList: Todo[] = [];
   private pageList = [];
   private page = 1;
 
@@ -58,11 +60,23 @@ export class TodoListService {
         const link = data.headers.get('Link');
         this.linkObj = this.parseLinkHeader(link);
         if (data.status === 200) {
-          this.pageList = this.generatePageArray(
-            this.linkObj.first,
-            this.linkObj.last
-          );
+          // this.pageList = this.generatePageArray(
+          //   this.linkObj.first,
+          //   this.linkObj.last
+          // );
           this.list = body.map((item) => new Todo(item.title, item.id));
+        }
+      });
+  }
+
+  // 取得所有代辦事項清單
+  fetchAllData(): void {
+    this.http
+      .get(`http://localhost:3000/lists`, { observe: 'response' })
+      .subscribe((data) => {
+        if (data.status === 200) {
+          const body: any = data.body;
+          this.allList = body.map((item) => new Todo(item.title, item.id));
         }
       });
   }
@@ -73,7 +87,15 @@ export class TodoListService {
       this.http
         .post('http://localhost:3000/lists', { title }, { observe: 'response' })
         .subscribe((res) => {
-          if (res.status === 201) this.fetchData();
+          if (res.status === 201) {
+            // 排除全部清空時沒有 id 的問題
+            const id: number =
+              this.allList.length > 0
+                ? this.allList[this.allList.length - 1].id + 1
+                : 1;
+
+            this.allList.push(new Todo(title, id));
+          }
         });
     }
   }
@@ -81,6 +103,13 @@ export class TodoListService {
   // 取得代辦事項清單
   getList(): Todo[] {
     return this.list;
+  }
+
+  // 取得代辦事項清單
+  getAllList(page?: number): Todo[] {
+    const firstNumber = this.page * 10 - 10;
+    const lastNumber = this.page * 10;
+    return this.allList.slice(firstNumber, lastNumber);
   }
 
   // 刪除代辦事項
@@ -92,8 +121,15 @@ export class TodoListService {
       .subscribe(async (res) => {
         if (res.status === 200) {
           // 判斷如果刪除的項目是最後一項的話，就將 page 直接回到第1頁
-          if (this.getList().length === 1) this.setPage(1);
-          await this.fetchData();
+          // if (this.getList().length === 1) {
+          //   this.setPage(1);
+          //   await this.fetchData();
+          // } else {
+          //   const index = this.list.findIndex((item) => item.id === id);
+          //   this.list.splice(index, 1);
+          // }
+          const index = this.allList.findIndex((item) => item.id === id);
+          this.allList.splice(index, 1);
         }
       });
   }
@@ -118,8 +154,9 @@ export class TodoListService {
   }
 
   // 獲取分頁資訊
-  getPageLIst() {
-    return this.pageList;
+  getTotalPage() {
+    const totalPage = Math.ceil(this.allList.length / 10);
+    return this.generatePageArray(1, totalPage);
   }
 
   // 獲取目前分頁
@@ -144,4 +181,7 @@ export class TodoListService {
         if (res.status === 200) this.fetchData();
       });
   }
+
+  // 添加畫面的 list 資料
+  addList(title: string, id: number) {}
 }

@@ -41,13 +41,13 @@ export class TodoListComponent implements OnInit {
       case TodoStatusType.Completed:
         return this.getCompletedList();
       default:
-        return this.todoListService.getList();
+        return this.todoListService.getAllList();
     }
   }
 
   // 獲取所有代辦事項清單
   getAllList(): Todo[] {
-    return this.todoListService.getList();
+    return this.todoListService.getAllList();
   }
 
   // 刪除代辦事項
@@ -119,15 +119,15 @@ export class TodoListComponent implements OnInit {
   }
 
   // 獲取分頁資訊
-  getPageLIst() {
-    return this.todoListService.getPageLIst();
+  getTotalPage() {
+    return this.todoListService.getTotalPage();
   }
 
   // 設定分頁狀態
   async setPageStatus(value) {
     this.todoListService.setPage(value);
     this.page = this.todoListService.getPage();
-    this.todoListService.fetchData();
+    this.todoListService.getAllList(this.page);
   }
 
   // 檢查分頁 active 狀態

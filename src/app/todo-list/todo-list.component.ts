@@ -127,7 +127,7 @@ export class TodoListComponent implements OnInit {
   async setPageStatus(value) {
     this.todoListService.setPage(value);
     this.page = this.todoListService.getPage();
-    this.todoListService.getAllList(this.page);
+    this.todoListService.getAllList();
   }
 
   // 檢查分頁 active 狀態

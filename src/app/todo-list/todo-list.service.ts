@@ -106,8 +106,8 @@ export class TodoListService {
   }
 
   // 取得代辦事項清單
-  getAllList(page?: number): Todo[] {
-    const firstNumber = this.page * 10 - 10;
+  getAllList(): Todo[] {
+    const firstNumber = 10 * (this.page - 1);
     const lastNumber = this.page * 10;
     return this.allList.slice(firstNumber, lastNumber);
   }
@@ -120,23 +120,19 @@ export class TodoListService {
       })
       .subscribe(async (res) => {
         if (res.status === 200) {
-          // 判斷如果刪除的項目是最後一項的話，就將 page 直接回到第1頁
-          // if (this.getList().length === 1) {
-          //   this.setPage(1);
-          //   await this.fetchData();
-          // } else {
-          //   const index = this.list.findIndex((item) => item.id === id);
-          //   this.list.splice(index, 1);
-          // }
           const index = this.allList.findIndex((item) => item.id === id);
           this.allList.splice(index, 1);
+          // 針對該頁列表完全清空後，就將頁面退到前一頁
+          if (this.page > 1 && this.getAllList().length === 0) {
+            this.setPage(this.page - 1);
+          }
         }
       });
   }
 
   // 取得已完成 / 未完成的清單
   getWithCompleted(completed: boolean): Todo[] {
-    return this.list.filter((todo) => todo.done() === completed);
+    return this.allList.filter((todo) => todo.done() === completed);
   }
 
   // 從清單中移除所有已完成之待辦事項

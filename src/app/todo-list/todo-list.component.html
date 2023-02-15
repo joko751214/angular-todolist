@@ -30,7 +30,7 @@
           *ngIf="todo.editing()"
           #editedtodo
           [value]="todo.getTitle()"
-          (blur)="updateTodo(todo, editedtodo.value, $event)"
+          (blur)="updateTodo(todo, editedtodo.value)"
           (keydown.enter)="editedtodo.blur()"
           (keydown.escape)="cancelEdit(todo)"
         />

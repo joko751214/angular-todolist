@@ -69,7 +69,7 @@ export class TodoListComponent implements OnInit {
     const title = newTitle.trim();
 
     if (title) {
-      this.todoListService.updateTodo(todo.id, title);
+      this.todoListService.updateTodo(todo, title);
     } else {
       const index = this.getList().indexOf(todo);
       if (index !== -1) {

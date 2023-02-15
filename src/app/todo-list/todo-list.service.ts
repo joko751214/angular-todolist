@@ -88,13 +88,7 @@ export class TodoListService {
         .post('http://localhost:3000/lists', { title }, { observe: 'response' })
         .subscribe((res) => {
           if (res.status === 201) {
-            // 排除全部清空時沒有 id 的問題
-            const id: number =
-              this.allList.length > 0
-                ? this.allList[this.allList.length - 1].id + 1
-                : 1;
-
-            this.allList.push(new Todo(title, id));
+            this.addList(title);
           }
         });
     }
@@ -112,19 +106,14 @@ export class TodoListService {
   }
 
   // 刪除代辦事項
-  removeTodo(id: number | string): void {
+  removeTodo(id: number): void {
     this.http
       .delete(`http://localhost:3000/lists/${id}`, {
         observe: 'response',
       })
       .subscribe(async (res) => {
         if (res.status === 200) {
-          const index = this.allList.findIndex((item) => item.id === id);
-          this.allList.splice(index, 1);
-          // 針對該頁列表完全清空後，就將頁面退到前一頁
-          if (this.page > 1 && this.getAllList().length === 0) {
-            this.setPage(this.page - 1);
-          }
+          this.removeList(id);
         }
       });
   }
@@ -165,18 +154,47 @@ export class TodoListService {
   }
 
   // 更新代辦事項標題
-  updateTodo(id: number, title: string) {
+  updateTodo(todo, title: string) {
     this.http
       .put(
-        `http://localhost:3000/lists/${id}`,
+        `http://localhost:3000/lists/${todo.id}`,
         { title },
         { observe: 'response' }
       )
       .subscribe((res) => {
-        if (res.status === 200) this.fetchData();
+        if (res.status === 200) {
+          this.updateList(todo.id, title);
+          todo.editable(false);
+        }
       });
   }
 
   // 添加畫面的 list 資料
-  addList(title: string, id: number) {}
+  addList(title: string) {
+    // 排除全部清空時沒有 id 的問題
+    const id: number =
+      this.allList.length > 0
+        ? this.allList[this.allList.length - 1].id + 1
+        : 1;
+    this.allList.push(new Todo(title, id));
+  }
+
+  // 刪除畫面的 list 資料
+  removeList(id: number) {
+    const index = this.allList.findIndex((item) => item.id === id);
+    this.allList.splice(index, 1);
+    // 針對該頁列表完全清空後，就將頁面退到前一頁
+    if (this.page > 1 && this.getAllList().length === 0) {
+      this.setPage(this.page - 1);
+    }
+  }
+
+  // 更新畫面的 list 資料
+  updateList(id: number, title: string) {
+    this.allList.forEach((item) => {
+      if (item.id === id) {
+        item.title = title;
+      }
+    });
+  }
 }

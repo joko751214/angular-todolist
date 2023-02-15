@@ -125,6 +125,7 @@ export class TodoListService {
 
   // 從清單中移除所有已完成之待辦事項
   async removeCompleted(): Promise<void> {
+    const idsArray = this.getWithCompleted(true).map((item) => item.id);
     const idsFetch = this.getWithCompleted(true).map((item) => {
       return this.http.delete(`http://localhost:3000/lists/${item.id}`, {
         observe: 'response',
@@ -133,7 +134,7 @@ export class TodoListService {
     forkJoin(idsFetch).subscribe((response) => {
       const allDone = response.every((res) => res.status === 200);
       if (this.getWithCompleted(false).length === 0) this.setPage(1);
-      if (allDone) this.fetchData();
+      if (allDone) this.removeMultipleLists(idsArray);
     });
   }
 
@@ -180,7 +181,7 @@ export class TodoListService {
   }
 
   // 刪除畫面的 list 資料
-  removeList(id: number) {
+  removeList(id: number | number[]) {
     const index = this.allList.findIndex((item) => item.id === id);
     this.allList.splice(index, 1);
     // 針對該頁列表完全清空後，就將頁面退到前一頁
@@ -195,6 +196,14 @@ export class TodoListService {
       if (item.id === id) {
         item.title = title;
       }
+    });
+  }
+
+  // 刪除多筆資料
+  removeMultipleLists(ids: number[]) {
+    ids.forEach((id) => {
+      const index = this.allList.findIndex((item) => item.id === id);
+      this.allList.splice(index, 1);
     });
   }
 }

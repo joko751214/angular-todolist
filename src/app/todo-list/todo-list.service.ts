@@ -101,12 +101,11 @@ export class TodoListService {
   }
 
   // 取得代辦事項清單
-  getList(): Todo[] {
-    return this.list;
-  }
-
-  // 取得代辦事項清單
-  getAllList(): Todo[] {
+  getAllList(clean?: string): Todo[] {
+    // 分頁切換時，要將原先紀錄的勾選狀態清空
+    if (clean) {
+      this.allList.map((item) => (item.completed = false));
+    }
     const firstNumber = 10 * (this.page - 1);
     const lastNumber = this.page * 10;
     return this.allList.slice(firstNumber, lastNumber);
@@ -132,7 +131,7 @@ export class TodoListService {
 
   // 取得已完成 / 未完成的清單
   getWithCompleted(completed: boolean): Todo[] {
-    return this.allList.filter((todo) => todo.done() === completed);
+    return this.getAllList().filter((todo) => todo.done() === completed);
   }
 
   // 從清單中移除所有已完成之待辦事項

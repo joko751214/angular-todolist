@@ -125,9 +125,13 @@ export class TodoListComponent implements OnInit {
 
   // 設定分頁狀態
   async setPageStatus(value) {
+    if (value === this.page) {
+      return;
+    }
     this.todoListService.setPage(value);
     this.page = this.todoListService.getPage();
-    this.todoListService.getAllList();
+    // 分頁切換時，要將原先紀錄的勾選狀態清空
+    this.todoListService.getAllList('clean');
   }
 
   // 檢查分頁 active 狀態
